@@ -47,6 +47,9 @@ public class HBaseClient {
             hBaseAdmin.createTable(hTableDescriptor);
         } catch (IOException ex) {
             LOGGER.info("Unable to create Table: "+table);
+            if (tableExists(table))
+                LOGGER.info("Table Already Exists");
+            System.exit(1);
         }
         return tableExists(table);
     }
@@ -127,5 +130,11 @@ public class HBaseClient {
             LOGGER.info("Instantiating table failed");
             return null;
         }
+    }
+
+    public static void main(String[] args) {
+        HBaseClient hBaseClient = new HBaseClient();
+        String[] cf = {"as"};
+        System.out.println(hBaseClient.createTable("test", cf));
     }
 }
