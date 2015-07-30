@@ -131,10 +131,4 @@ public class HBaseClient {
             return null;
         }
     }
-
-    public static void main(String[] args) {
-        HBaseClient hBaseClient = new HBaseClient();
-        String[] cf = {"as"};
-        System.out.println(hBaseClient.createTable("test", cf));
-    }
 }
