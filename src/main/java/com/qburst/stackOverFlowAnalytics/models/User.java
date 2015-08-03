@@ -1,23 +1,41 @@
 package com.qburst.stackOverFlowAnalytics.models;
 
+import com.fasterxml.jackson.annotation.JsonTypeName;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
+
+@JsonTypeName(value = "user" )
 public class User {
+    @JacksonXmlProperty(isAttribute = true)
     private String Id;
-    private String Reputation;
+    @JacksonXmlProperty(isAttribute = true)
+    private int Reputation;
+    @JacksonXmlProperty(isAttribute = true)
     private String CreationDate;
+    @JacksonXmlProperty(isAttribute = true)
     private String DisplayName;
+    @JacksonXmlProperty(isAttribute = true)
     private String LastAccessDate;
+    @JacksonXmlProperty(isAttribute = true)
     private String WebsiteUrl;
+    @JacksonXmlProperty(isAttribute = true)
     private String Location;
+    @JacksonXmlProperty(isAttribute = true)
     private String AboutMe;
-    private String Views;
-    private String UpVotes;
-    private String DownVotes;
+    @JacksonXmlProperty(isAttribute = true)
+    private int Views;
+    @JacksonXmlProperty(isAttribute = true)
+    private int UpVotes;
+    @JacksonXmlProperty(isAttribute = true)
+    private int DownVotes;
+    @JacksonXmlProperty(isAttribute = true)
+    private String Age;
+    @JacksonXmlProperty(isAttribute = true)
     private String AccountId;
+    @JacksonXmlProperty(isAttribute = true)
+    private String ProfileImageUrl;
 
-    public User() {
-    }
 
-    public User(String id, String reputation, String creationDate, String displayName, String lastAccessDate, String websiteUrl, String location, String aboutMe, String views, String upVotes, String downVotes, String accountId) {
+    public User(String id, int reputation, String creationDate, String displayName, String lastAccessDate, String websiteUrl, String location, String aboutMe, int views, int upVotes, int downVotes, String age, String accountId, String profileImageUrl) {
         Id = id;
         Reputation = reputation;
         CreationDate = creationDate;
@@ -29,7 +47,60 @@ public class User {
         Views = views;
         UpVotes = upVotes;
         DownVotes = downVotes;
+        Age = age;
         AccountId = accountId;
+        ProfileImageUrl = profileImageUrl;
+    }
+
+    public String getProfileImageUrl() {
+        return ProfileImageUrl;
+    }
+
+    public void setProfileImageUrl(String profileImageUrl) {
+        ProfileImageUrl = profileImageUrl;
+    }
+
+    public User() {
+    }
+
+    public String getAge() {
+        return Age;
+    }
+
+    public void setAge(String age) {
+        Age = age;
+    }
+
+    public int getReputation() {
+        return Reputation;
+    }
+
+    public void setReputation(int reputation) {
+        Reputation = reputation;
+    }
+
+    public int getViews() {
+        return Views;
+    }
+
+    public void setViews(int views) {
+        Views = views;
+    }
+
+    public int getUpVotes() {
+        return UpVotes;
+    }
+
+    public void setUpVotes(int upVotes) {
+        UpVotes = upVotes;
+    }
+
+    public int getDownVotes() {
+        return DownVotes;
+    }
+
+    public void setDownVotes(int downVotes) {
+        DownVotes = downVotes;
     }
 
     public String getId() {
@@ -38,14 +109,6 @@ public class User {
 
     public void setId(String id) {
         Id = id;
-    }
-
-    public String getReputation() {
-        return Reputation;
-    }
-
-    public void setReputation(String reputation) {
-        Reputation = reputation;
     }
 
     public String getCreationDate() {
@@ -80,7 +143,7 @@ public class User {
         WebsiteUrl = websiteUrl;
     }
 
-    public String getLocation() {
+    public String   getLocation() {
         return Location;
     }
 
@@ -94,30 +157,6 @@ public class User {
 
     public void setAboutMe(String aboutMe) {
         AboutMe = aboutMe;
-    }
-
-    public String getViews() {
-        return Views;
-    }
-
-    public void setViews(String views) {
-        Views = views;
-    }
-
-    public String getUpVotes() {
-        return UpVotes;
-    }
-
-    public void setUpVotes(String upVotes) {
-        UpVotes = upVotes;
-    }
-
-    public String getDownVotes() {
-        return DownVotes;
-    }
-
-    public void setDownVotes(String downVotes) {
-        DownVotes = downVotes;
     }
 
     public String getAccountId() {

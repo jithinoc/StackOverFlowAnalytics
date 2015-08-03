@@ -1,0 +1,9 @@
+job: CDJob
+table: StackOverFlowCountryDistribution
+source: /home/jithinoc/Fatboy/stackoverflow
+postFile: Posts.xml
+userFile: Users.xml
+columnFamily: CountryDistribution
+countryColumn: country
+postCountColumn: postCount
+

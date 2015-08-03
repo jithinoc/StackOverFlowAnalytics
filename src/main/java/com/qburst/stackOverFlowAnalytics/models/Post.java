@@ -1,7 +1,9 @@
 package com.qburst.stackOverFlowAnalytics.models;
 
+import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 
+@JsonTypeName(value = "post" )
 public class Post {
     @JacksonXmlProperty(isAttribute = true)
     private String Id;
@@ -12,9 +14,9 @@ public class Post {
     @JacksonXmlProperty(isAttribute = true)
     private String CreationDate;
     @JacksonXmlProperty(isAttribute = true)
-    private String Score;
+    private int Score;
     @JacksonXmlProperty(isAttribute = true)
-    private String ViewCount;
+    private int ViewCount;
     @JacksonXmlProperty(isAttribute = true)
     private String Body;
     @JacksonXmlProperty(isAttribute = true)
@@ -32,18 +34,21 @@ public class Post {
     @JacksonXmlProperty(isAttribute = true)
     private String Tags;
     @JacksonXmlProperty(isAttribute = true)
-    private String AnswerCount;
+    private int AnswerCount;
     @JacksonXmlProperty(isAttribute = true)
-    private String CommentCount;
+    private int CommentCount;
     @JacksonXmlProperty(isAttribute = true)
-    private String FavoriteCount;
+    private int FavoriteCount;
     @JacksonXmlProperty(isAttribute = true)
     private String CommunityOwnedDate;
+    @JacksonXmlProperty(isAttribute = true)
+    private String ParentId;
+    @JacksonXmlProperty(isAttribute = true)
+    private String OwnerDisplayName;
+    @JacksonXmlProperty(isAttribute = true)
+    private String ClosedDate;
 
-    public Post() {
-    }
-
-    public Post(String id, String postTypeId, String acceptedAnswerId, String creationDate, String score, String viewCount, String body, String ownerUserId, String lastEditorUserId, String lastEditorDisplayName, String lastEditDate, String lastActivityDate, String title, String tags, String answerCount, String commentCount, String favoriteCount, String communityOwnedDate) {
+    public Post(String id, String postTypeId, String acceptedAnswerId, String creationDate, int score, int viewCount, String body, String ownerUserId, String lastEditorUserId, String lastEditorDisplayName, String lastEditDate, String lastActivityDate, String title, String tags, int answerCount, int commentCount, int favoriteCount, String communityOwnedDate, String parentId, String ownerDisplayName, String closedDate) {
         Id = id;
         PostTypeId = postTypeId;
         AcceptedAnswerId = acceptedAnswerId;
@@ -62,6 +67,37 @@ public class Post {
         CommentCount = commentCount;
         FavoriteCount = favoriteCount;
         CommunityOwnedDate = communityOwnedDate;
+        ParentId = parentId;
+        OwnerDisplayName = ownerDisplayName;
+        ClosedDate = closedDate;
+    }
+
+    public String getOwnerDisplayName() {
+        return OwnerDisplayName;
+    }
+
+    public void setOwnerDisplayName(String ownerDisplayName) {
+        OwnerDisplayName = ownerDisplayName;
+    }
+
+    public String getClosedDate() {
+        return ClosedDate;
+    }
+
+    public void setClosedDate(String closedDate) {
+        ClosedDate = closedDate;
+    }
+
+    public String getParentId() {
+        return ParentId;
+
+    }
+
+    public void setParentId(String parentId) {
+        ParentId = parentId;
+    }
+
+    public Post() {
     }
 
     public String getId() {
@@ -88,28 +124,52 @@ public class Post {
         AcceptedAnswerId = acceptedAnswerId;
     }
 
+    public int getScore() {
+        return Score;
+    }
+
+    public void setScore(int score) {
+        Score = score;
+    }
+
+    public int getViewCount() {
+        return ViewCount;
+    }
+
+    public void setViewCount(int viewCount) {
+        ViewCount = viewCount;
+    }
+
+    public int getAnswerCount() {
+        return AnswerCount;
+    }
+
+    public void setAnswerCount(int answerCount) {
+        AnswerCount = answerCount;
+    }
+
+    public int getCommentCount() {
+        return CommentCount;
+    }
+
+    public void setCommentCount(int commentCount) {
+        CommentCount = commentCount;
+    }
+
+    public int getFavoriteCount() {
+        return FavoriteCount;
+    }
+
+    public void setFavoriteCount(int favoriteCount) {
+        FavoriteCount = favoriteCount;
+    }
+
     public String getCreationDate() {
         return CreationDate;
     }
 
     public void setCreationDate(String creationDate) {
         CreationDate = creationDate;
-    }
-
-    public String getScore() {
-        return Score;
-    }
-
-    public void setScore(String score) {
-        Score = score;
-    }
-
-    public String getViewCount() {
-        return ViewCount;
-    }
-
-    public void setViewCount(String viewCount) {
-        ViewCount = viewCount;
     }
 
     public String getBody() {
@@ -174,30 +234,6 @@ public class Post {
 
     public void setTags(String tags) {
         Tags = tags;
-    }
-
-    public String getAnswerCount() {
-        return AnswerCount;
-    }
-
-    public void setAnswerCount(String answerCount) {
-        AnswerCount = answerCount;
-    }
-
-    public String getCommentCount() {
-        return CommentCount;
-    }
-
-    public void setCommentCount(String commentCount) {
-        CommentCount = commentCount;
-    }
-
-    public String getFavoriteCount() {
-        return FavoriteCount;
-    }
-
-    public void setFavoriteCount(String favoriteCount) {
-        FavoriteCount = favoriteCount;
     }
 
     public String getCommunityOwnedDate() {
