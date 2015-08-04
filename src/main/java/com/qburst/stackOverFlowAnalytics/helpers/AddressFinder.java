@@ -11,47 +11,64 @@ import java.net.URLConnection;
 import java.net.URLEncoder;
 
 public class AddressFinder {
-    public String find(String address) {
-        String formatted_address = "Undefined";
-        try {
-            URL url = new URL("http://maps.googleapis.com/maps/api/geocode/json?address="+ URLEncoder.encode(address, "UTF-8")+"&sensor=false");
-            URLConnection con = url.openConnection();
-            InputStream in = con.getInputStream();
-            String encoding = con.getContentEncoding();
-            encoding = encoding == null ? "UTF-8" : encoding;
-            String body = IOUtils.toString(in, encoding);
-
-            JSONObject json = (JSONObject) JSONSerializer.toJSON(body);
-            String status = json.getString("status");
-            if(status.equals("OK")) {
-                JSONArray jsonArray = json.getJSONArray("results");
-                JSONObject jsonObject = jsonArray.getJSONObject(0);
-                formatted_address = jsonObject.getString("formatted_address");
-                System.out.println(address+ "---"+formatted_address);
-            }
-        }catch (Exception ex) {
-            System.out.println("-------->"+address);
-        }
-        return formatted_address;
+    private String getResponse(URL url) throws IOException {
+        URLConnection urlConnection = url.openConnection();
+        InputStream inputStream = urlConnection.getInputStream();
+        String encoding = urlConnection.getContentEncoding();
+        encoding = (encoding == null) ? "UTF-8" : encoding;
+        return IOUtils.toString(inputStream, encoding);
     }
 
-    public void findAll(String sourcePath, String destinationPath) {
-        try {
-            BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(sourcePath), "UTF-16"));
-            String line;
-            PrintWriter writer = new PrintWriter(destinationPath, "UTF-16");
-            while ((line = br.readLine()) != null) {
-                String formatted_address = this.find(line.trim());
-                writer.println(line+"##"+formatted_address);
-            }
-            writer.close();
-        } catch (IOException ex) {
-            ex.printStackTrace();
+    private String getAddressFromBody(String body) {
+        JSONObject json = (JSONObject) JSONSerializer.toJSON(body);
+        String status = json.getString("status");
+        String formattedAddress;
+        if(status.equals("OK")) {
+            JSONArray jsonArray = json.getJSONArray("results");
+            JSONObject jsonObject = jsonArray.getJSONObject(0);
+            formattedAddress = jsonObject.getString("formatted_address");
+        } else {
+            formattedAddress = "#undefined#";
         }
+        return formattedAddress;
     }
 
-    public static void main(String[] args) {
+    /* Returns formatted_address value from json response after google maps api request */
+    public String getFormattedAddress(String text) throws IOException {
+        URL url = new URL("http://maps.googleapis.com/maps/api/geocode/json?address=" +
+                URLEncoder.encode(text, "UTF-8")+
+                "&sensor=false"
+        );
+        String body = getResponse(url);
+        return getAddressFromBody(body);
+    }
+
+    /*
+    sourceFile:       contains list of text to search
+    successQueryFile: fills with formatted_address for each sourceFile input
+    failedQueryFile:  fills with failed query inputs
+    */
+    public void getAllFormattedAddress(String sourceFile, String successQueryFile, String failedQueryFile) throws IOException {
+        BufferedReader sourceFileReader = new BufferedReader(
+                new InputStreamReader(new FileInputStream(sourceFile), "UTF-16")
+        );
+        PrintWriter successQueryFileWriter = new PrintWriter(successQueryFile, "UTF-16");
+        PrintWriter failedQueryFileWriter = new PrintWriter(failedQueryFile, "UTF-16");
+        String line;
+        while ((line = sourceFileReader.readLine()) != null) {
+            String formatted_address = this.getFormattedAddress(line.trim());
+            if(formatted_address.equals("#undefined#")) {
+                failedQueryFileWriter.println(line);
+            } else {
+                successQueryFileWriter.println(line + "##" + formatted_address);
+            }
+        }
+        successQueryFileWriter.close();
+        failedQueryFileWriter.close();
+    }
+
+    public static void main(String[] args) throws IOException {
         AddressFinder addressFinder = new AddressFinder();
-        addressFinder.findAll("/home/jithinoc/Fatboy/stackoverflow/locations.txt", "/home/jithinoc/Fatboy/stackoverflow/countryMap.txt");
+        addressFinder.getAllFormattedAddress(args[0], args[1], args[2]);
     }
 }
