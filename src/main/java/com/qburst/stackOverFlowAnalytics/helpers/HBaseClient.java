@@ -18,117 +18,73 @@ public class HBaseClient {
     private Configuration configuration = HBaseConfiguration.create();
     private HTable hTable;
 
-    public HBaseClient() {
-        try {
-            hBaseAdmin = new HBaseAdmin(configuration);
-        } catch (Exception ex) {
-            LOGGER.info("HBaseAdmin creation Failed");
-            System.exit(1);
-        }
+    public HBaseClient() throws IOException {
+        hBaseAdmin = new HBaseAdmin(configuration);
     }
 
-    public boolean tableExists(String table) {
-        try {
-            return hBaseAdmin.tableExists(table);
-        } catch (IOException ex) {
-            LOGGER.info("Unable to check table exists");
-            return false;
-        }
+    public boolean tableExists(String table) throws IOException {
+        return hBaseAdmin.tableExists(table);
     }
 
-    public boolean createTable(String table, String[] columnFamilies) {
+    public boolean createTable(String table, String[] columnFamilies) throws IOException {
         HTableDescriptor hTableDescriptor = new HTableDescriptor(TableName.valueOf(table));
         HColumnDescriptor hColumnDescriptor;
-        for(String columnFamily: columnFamilies) {
+        for (String columnFamily : columnFamilies) {
             hColumnDescriptor = new HColumnDescriptor(columnFamily);
             hTableDescriptor.addFamily(hColumnDescriptor);
         }
-        try {
-            hBaseAdmin.createTable(hTableDescriptor);
-        } catch (IOException ex) {
-            LOGGER.info("Unable to create Table: "+table);
-            if (tableExists(table))
-                LOGGER.info("Table Already Exists");
-            System.exit(1);
-        }
+
+        hBaseAdmin.createTable(hTableDescriptor);
+
         return tableExists(table);
     }
 
-    public boolean enableTable(String table) {
-        try {
-            hBaseAdmin.disableTable(table);
-            return hBaseAdmin.isTableEnabled(table);
-        } catch (IOException ex) {
-            LOGGER.info("Unable to enable " + table);
-            return false;
-        }
+    public boolean enableTable(String table) throws IOException {
+        hBaseAdmin.disableTable(table);
+        return hBaseAdmin.isTableEnabled(table);
+
     }
 
-    public boolean disableTable(String table) {
-        try {
-            hBaseAdmin.disableTable(table);
-            return hBaseAdmin.isTableDisabled(table);
-        } catch (IOException ex) {
-            LOGGER.info("Unable to disable " + table);
-            return false;
-        }
+    public boolean disableTable(String table) throws IOException {
+        hBaseAdmin.disableTable(table);
+        return hBaseAdmin.isTableDisabled(table);
+
     }
 
-    public boolean dropTable(String table) {
+    public boolean dropTable(String table) throws IOException {
         disableTable(table);
-        try {
-            hBaseAdmin.deleteTable(table);
-            return !tableExists(table);
-        } catch (IOException ex) {
-            LOGGER.info("Unable to delete "+table);
-            return false;
-        }
+        hBaseAdmin.deleteTable(table);
+        return !tableExists(table);
+
     }
 
-    public boolean putTable(String table, Put put) {
-        try {
-            hTable = new HTable(configuration, table);
-            hTable.put(put);
-            hTable.close();
-            return true;
-        }catch (IOException ex) {
-            LOGGER.info("Instantiating table failed");
-            return false;
-        }
+    public boolean putTable(String table, Put put) throws IOException {
+        hTable = new HTable(configuration, table);
+        hTable.put(put);
+        hTable.close();
+        return true;
+
     }
 
-    public boolean multiplePutTable(String table, List<Put> puts) {
-        try {
-            hTable = new HTable(configuration, table);
-            hTable.put(puts);
-            hTable.close();
-            return true;
-        }catch (IOException ex) {
-            LOGGER.info("Instantiating table failed");
-            return false;
-        }
+    public boolean multiplePutTable(String table, List<Put> puts) throws IOException {
+        hTable = new HTable(configuration, table);
+        hTable.put(puts);
+        hTable.close();
+        return true;
+
     }
 
-    public Result getTable(String table, Get get) {
-        try {
-            hTable = new HTable(configuration, table);
-            return hTable.get(get);
-        } catch (IOException ex) {
-            LOGGER.info("Instantiating table failed");
-            System.exit(1);
-            return null;
-        }
+    public Result getTable(String table, Get get) throws IOException {
+        hTable = new HTable(configuration, table);
+        return hTable.get(get);
+
     }
 
-    public List<Result> scanTable(String table, Scan scan) {
-        try {
-            hTable = new HTable(configuration, table);
-            List<Result> results = Lists.newArrayList(hTable.getScanner(scan).iterator());
-            LOGGER.info(results.size() + " results found");
-            return results;
-        } catch (IOException ex) {
-            LOGGER.info("Instantiating table failed");
-            return null;
-        }
+    public List<Result> scanTable(String table, Scan scan) throws IOException {
+        hTable = new HTable(configuration, table);
+        List<Result> results = Lists.newArrayList(hTable.getScanner(scan).iterator());
+        LOGGER.info(results.size() + " results found");
+        return results;
+
     }
 }
