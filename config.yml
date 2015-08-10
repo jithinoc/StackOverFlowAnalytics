@@ -1,9 +1,10 @@
 job: CDJob
 table: StackOverFlowCountryDistribution
-source: /home/jithinoc/Fatboy/stackoverflow
+source: /home/jithinoc/Fatboy/stackoverflow/test
 postFile: Posts.xml
 userFile: Users.xml
 columnFamily: CountryDistribution
 countryColumn: country
 postCountColumn: postCount
-
+locationMap: /home/jithinoc/Fatboy/stackoverflow/analytics/addressMap.txt
+locationMapSeperator: 000#000

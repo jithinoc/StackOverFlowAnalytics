@@ -1,5 +1,6 @@
 package com.qburst.stackOverFlowAnalytics.mapreduce.countryDistribution;
 
+import com.qburst.stackOverFlowAnalytics.helpers.HashTable;
 import com.qburst.stackOverFlowAnalytics.helpers.XMLObjectBuilder;
 import com.qburst.stackOverFlowAnalytics.models.Post;
 import com.qburst.stackOverFlowAnalytics.models.User;
@@ -14,49 +15,47 @@ import java.io.IOException;
 
 public class CDMapper extends Mapper<LongWritable, Text, Text, Text> {
     private Logger LOGGER = Logger.getLogger(CDMapper.class);
+    private HashTable locationMapper=null;
 
-    public void map(LongWritable key, Text value, Context context) {
+    public void setup(Context context) {
+        Configuration configuration = context.getConfiguration();
+        try {
+            locationMapper = new HashTable(configuration.get("locationMap"), configuration.get("locationMapSeperator"));
+        } catch (IOException ex) {
+            LOGGER.info("Loading locationMapper Failed");
+        }
+    }
+
+    public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException{
         Configuration configuration = context.getConfiguration();
         String sourceFile = ((FileSplit) context.getInputSplit()).getPath().getName();
         if(sourceFile.equals(configuration.get("postFile"))) {
-            try {
-                Post post = (Post)XMLObjectBuilder.xmlToObject(value.toString(), Post.class);
+            if(value.toString().contains("row")) {
+                Post post = (Post) XMLObjectBuilder.xmlToObject(value.toString(), Post.class);
                 String ownerUserId = post.getOwnerUserId();
-                if(ownerUserId==null) {
+                if (ownerUserId == null) {
                     ownerUserId = "Undefined";
                 }
                 Text userId = new Text(ownerUserId);
                 Text one = new Text("one");
                 context.write(userId, one);
-            } catch (IOException ex) {
-                LOGGER.info("Unable to parse Post xml");
-                LOGGER.info(ex.getMessage());
-            } catch (InterruptedException ex) {
-                LOGGER.info("Mapper interrupted on Post");
             }
         } else {
-            try {
-                User user = (User)XMLObjectBuilder.xmlToObject(value.toString(), User.class);
-                Text userId = new Text(user.getAccountId());
-                String locationValue = user.getLocation();
-                String country;
-                if(locationValue==null) {
-                    locationValue = "Undefined";
-                }
-                if(locationValue.contains(",")) {
-                    String[] tokens = locationValue.split(",");
-                    country = tokens[tokens.length-1];
-                } else {
-                    country = locationValue;
-                }
-                Text location = new Text(country);
-                context.write(userId, location);
-            } catch (IOException ex) {
-                LOGGER.info("Unable to parse User xml");
-                LOGGER.info(ex.getMessage());
-            } catch (InterruptedException ex) {
-                LOGGER.info("Mapper interrupted on User");
+            User user = (User)XMLObjectBuilder.xmlToObject(value.toString(), User.class);
+            String accountId = user.getAccountId();
+            String userLocation = user.getLocation();
+            String country;
+            if(accountId==null) {
+                accountId = "#undefined#";
             }
+            Text userId = new Text(accountId);
+            if(userLocation==null) {
+                country = "#undefined#";
+            } else {
+                country = locationMapper.get(userLocation);
+            }
+            Text location = new Text(country);
+            context.write(userId, location);
         }
     }
 }

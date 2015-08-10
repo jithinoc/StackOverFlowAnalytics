@@ -15,13 +15,12 @@ public class CDJob {
     private Logger LOGGER = Logger.getLogger(CDJob.class);
     private Job job;
 
-    public CDJob(Configuration configuration) {
+    public CDJob(Configuration configuration) throws IOException{
         this.job = createJob(configuration);
     }
 
-    public Job createJob(Configuration configuration) {
+    public Job createJob(Configuration configuration) throws IOException {
         Job job=null;
-        try {
             job = new Job(configuration, configuration.get("job"));
             job.setJarByClass(CDJob.class);
             job.setMapperClass(CDMapper.class);
@@ -34,19 +33,9 @@ public class CDJob {
                     job
             );
             FileInputFormat.addInputPath(job, new Path(configuration.get("source")));
-        }catch (IOException ex) {
-            LOGGER.info("Job creation failed");
-            ex.printStackTrace();
-        }
         return job;
     }
-    public boolean run() {
-        try {
-            return job.waitForCompletion(true);
-        }catch (Exception ex) {
-            LOGGER.info("Job run failed");
-            ex.printStackTrace();
-            return false;
-        }
+    public boolean run() throws IOException, InterruptedException, ClassNotFoundException{
+        return job.waitForCompletion(true);
     }
 }

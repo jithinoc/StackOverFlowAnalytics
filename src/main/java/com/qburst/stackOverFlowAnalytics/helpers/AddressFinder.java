@@ -35,10 +35,12 @@ public class AddressFinder {
 
     /* Returns formatted_address value from json response after google maps api request */
     public String getFormattedAddress(String text) throws IOException {
-        URL url = new URL("http://maps.googleapis.com/maps/api/geocode/json?address=" +
+        URL url = new URL("https://maps.googleapis.com/maps/api/geocode/json?address=" +
                 URLEncoder.encode(text, "UTF-8")+
-                "&sensor=false"
+                "&sensor=false&key=AIzaSyCylO2gdL8br3doelaZBgc7gpCCYzi5RdU"
         );
+        // AIzaSyCylO2gdL8br3doelaZBgc7gpCCYzi5RdU
+        // AIzaSyA0_I3gZ2_wFAQpOiCgEH7hTkmOKr9mNm4
         String body = getResponse(url);
         return getAddressFromBody(body);
     }
@@ -50,12 +52,13 @@ public class AddressFinder {
     */
     public void getAllFormattedAddress(String sourceFile, String successQueryFile, String failedQueryFile) throws IOException {
         BufferedReader sourceFileReader = new BufferedReader(
-                new InputStreamReader(new FileInputStream(sourceFile), "UTF-16")
+                new InputStreamReader(new FileInputStream(sourceFile), "UTF-8")
         );
-        PrintWriter successQueryFileWriter = new PrintWriter(successQueryFile, "UTF-16");
-        PrintWriter failedQueryFileWriter = new PrintWriter(failedQueryFile, "UTF-16");
+        PrintWriter successQueryFileWriter = new PrintWriter(successQueryFile, "UTF-8");
+        PrintWriter failedQueryFileWriter = new PrintWriter(failedQueryFile, "UTF-8");
         String line;
         while ((line = sourceFileReader.readLine()) != null) {
+            System.out.println(line);
             String formatted_address = this.getFormattedAddress(line.trim());
             if(formatted_address.equals("#undefined#")) {
                 failedQueryFileWriter.println(line);
@@ -70,5 +73,6 @@ public class AddressFinder {
     public static void main(String[] args) throws IOException {
         AddressFinder addressFinder = new AddressFinder();
         addressFinder.getAllFormattedAddress(args[0], args[1], args[2]);
+//        System.out.println(addressFinder.getFormattedAddress("chennai"));
     }
 }
