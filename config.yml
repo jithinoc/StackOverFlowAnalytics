@@ -1,5 +1,5 @@
 job: CDJob
-table: StackOverFlowCountryDistribution
+table: CDSOFTest
 source: /home/jithinoc/Fatboy/stackoverflow/test
 postFile: Posts.xml
 userFile: Users.xml

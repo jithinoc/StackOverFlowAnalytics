@@ -1,5 +1,6 @@
 package com.qburst.stackOverFlowAnalytics.helpers;
 
+import com.qburst.stackOverFlowAnalytics.models.Post;
 import com.qburst.stackOverFlowAnalytics.models.User;
 
 import java.io.BufferedReader;
@@ -13,23 +14,28 @@ public class XMLEntityExtractor {
         HashSet<String> locations = new HashSet<String >();
         BufferedReader xmlFileReader = new BufferedReader(new FileReader(xmlPath));
         String line;
+        PrintWriter noLocationWriter = new PrintWriter("/home/jithinoc/Fatboy/stackoverflow/analytics/noLocationUsers.txt", "UTF-8");
+        PrintWriter writeToWriter = new PrintWriter(writeTo, "UTF-8");
         while ((line = xmlFileReader.readLine()) != null) {
             if(line.contains("<row")) {
                 line = line.trim().replaceFirst("^([\\W]+)<", "<");
-                User user = (User) XMLObjectBuilder.xmlToObject(line, User.class);
-                System.out.println(user.getAccountId());
-                if (user.getLocation() != null)
-                    locations.add(user.getLocation().toLowerCase());
+                Post post = (Post) XMLObjectBuilder.xmlToObject(line, Post.class);
+                System.out.println(post.getOwnerUserId());
+                if (post.getOwnerUserId() != null)
+                    writeToWriter.println(post.getOwnerUserId());
+//                    locations.add(user.getLocation().toLowerCase());
+//                    if(user.getAccountId() != null)
+//                    noLocationWriter.println(user.getAccountId());
             }
         }
-        PrintWriter writeToWriter = new PrintWriter(writeTo, "UTF-8");
-        for(String location: locations)
-            writeToWriter.println(location);
+
+//        for(String location: locations)
+//            writeToWriter.println(location);
         writeToWriter.close();
     }
 
     public static void main(String[] args) throws IOException {
         XMLEntityExtractor xmlEntityExtractor = new XMLEntityExtractor();
-        xmlEntityExtractor.extract_attribute("/home/jithinoc/Fatboy/stackoverflow/Users.xml", "/home/jithinoc/Fatboy/stackoverflow/analytics/locations.txt");
+        xmlEntityExtractor.extract_attribute("/home/jithinoc/Fatboy/stackoverflow/Posts.xml", "/home/jithinoc/Fatboy/stackoverflow/analytics/uids.txt");
     }
 }

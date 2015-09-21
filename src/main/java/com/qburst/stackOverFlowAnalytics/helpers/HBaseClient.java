@@ -27,6 +27,10 @@ public class HBaseClient {
     }
 
     public boolean createTable(String table, String[] columnFamilies) throws IOException {
+        if (tableExists(table)) {
+            LOGGER.info("Table already Exists   ");
+            return true;
+        }
         HTableDescriptor hTableDescriptor = new HTableDescriptor(TableName.valueOf(table));
         HColumnDescriptor hColumnDescriptor;
         for (String columnFamily : columnFamilies) {
